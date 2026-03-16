@@ -34,6 +34,7 @@ export const GROUPING_OPTIONS = [
 ];
 
 const UNASSIGNED_LABEL = "Unassigned";
+const DEFAULT_CSV_PATH = `${import.meta.env.BASE_URL}activities.csv`;
 
 const records = writable([]);
 export const selectedGrouping = writable(GROUPING_OPTIONS[0].value);
@@ -52,7 +53,7 @@ export async function loadDefaultCsv() {
   uploadError.set("");
 
   try {
-    const response = await fetch("/activities.csv");
+    const response = await fetch(DEFAULT_CSV_PATH);
     if (!response.ok) {
       throw new Error(
         `Could not load activities.csv (HTTP ${response.status}).`,
