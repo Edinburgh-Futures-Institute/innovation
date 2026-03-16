@@ -1,0 +1,360 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+:root {
+  --ink: #0f1b2d;
+  --muted: #445169;
+  --line: #d4ddeb;
+  --panel: rgba(255, 255, 255, 0.86);
+  --error: #b3261e;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Manrope", "Trebuchet MS", "Segoe UI", sans-serif;
+  background-color: rgb(255, 255, 255);
+}
+
+#app {
+  height: 100vh;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+.page {
+  max-width: 1120px;
+  height: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.panel,
+.viz-shell {
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  background: var(--panel);
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+  box-shadow: 0 16px 36px rgba(15, 27, 45, 0.14);
+  backdrop-filter: blur(10px);
+  animation: rise 420ms ease-out both;
+}
+
+.panel {
+  position: relative;
+  text-align: center;
+  display: grid;
+  align-items: center;
+  min-height: clamp(4.3rem, 10vw, 5.6rem);
+}
+
+h1 {
+  margin: 0;
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+}
+
+.intro {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+.controls {
+  position: absolute;
+  top: clamp(0.55rem, 1.6vw, 0.85rem);
+  left: clamp(0.7rem, 2vw, 1rem);
+  right: clamp(0.7rem, 2vw, 1rem);
+  z-index: 4;
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.controls-left,
+.controls-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.controls-left {
+  align-items: flex-start;
+}
+
+.controls-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.upload {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.95rem;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid #1f4b99;
+  color: #1f4b99;
+  background: rgba(31, 75, 153, 0.08);
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+
+.upload:hover {
+  transform: translateY(-1px);
+  background: rgba(31, 75, 153, 0.15);
+}
+
+.upload:focus-within {
+  outline: 3px solid rgba(31, 75, 153, 0.24);
+  outline-offset: 2px;
+}
+
+.upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.controls-right .filter {
+  align-items: flex-end;
+}
+
+.filter select {
+  border: 1px solid rgba(15, 27, 45, 0.25);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0.55rem 0.7rem;
+}
+
+.filter select:focus-visible {
+  outline: 3px solid rgba(31, 75, 153, 0.24);
+  outline-offset: 2px;
+}
+
+.source {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.error {
+  margin: 0.8rem 0 0;
+  color: var(--error);
+  font-weight: 700;
+}
+
+.controls .error {
+  margin: 0;
+}
+
+.viz-shell {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.viz-shell svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.empty-state {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.node {
+  opacity: 0;
+  animation: reveal 460ms ease-out both;
+  animation-delay: calc(var(--idx) * 20ms);
+}
+
+.node circle {
+  transition: stroke-width 170ms ease;
+}
+
+.root-node,
+.group-node,
+.activity-node {
+  cursor: pointer;
+}
+
+.node:focus,
+.node:focus-visible,
+.root-node:focus,
+.root-node:focus-visible,
+.group-node:focus,
+.group-node:focus-visible,
+.activity-node:focus,
+.activity-node:focus-visible {
+  outline: none;
+}
+
+.root-node circle {
+  opacity: 0.36;
+  stroke-width: 0.5px;
+}
+
+.group-node circle,
+.activity-node circle {
+  stroke-width: 0.5px;
+}
+
+.activity-node circle {
+  opacity: 0.88;
+}
+
+.root-node:hover circle,
+.root-node:focus-visible circle {
+  stroke-width: 1.6px;
+}
+
+.group-node:hover circle,
+.group-node:focus-visible circle,
+.activity-node:hover circle,
+.activity-node:focus-visible circle {
+  stroke-width: 1.6px;
+}
+
+.group-node.is-focused circle {
+  stroke-width: 2px;
+}
+
+.label-layer {
+  pointer-events: none;
+}
+
+.label {
+  pointer-events: none;
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  fill: rgba(12, 21, 34, 0.95);
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 3.2px;
+  stroke-linejoin: round;
+}
+
+.group-label {
+  font-size: 13px;
+}
+
+.root-label {
+  font-size: 17px;
+  letter-spacing: 0.02em;
+}
+
+.activity-label {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.group-subtitle {
+  pointer-events: none;
+  font-family: "Manrope", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  fill: rgba(15, 27, 45, 0.72);
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.86);
+  stroke-width: 2.6px;
+}
+
+.zoom-hint {
+  position: absolute;
+  left: 1rem;
+  bottom: 0.85rem;
+  margin: 0;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 27, 45, 0.14);
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(15, 27, 45, 0.84);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  #app {
+    padding: 0.7rem;
+  }
+
+  .panel,
+  .viz-shell {
+    border-radius: 16px;
+    padding: 1rem;
+  }
+
+  .controls {
+    top: 0.5rem;
+    left: 0.6rem;
+    right: 0.6rem;
+  }
+
+  .controls-right,
+  .controls-right .filter {
+    align-items: flex-end;
+  }
+
+  .zoom-hint {
+    left: 0.7rem;
+    bottom: 0.7rem;
+    font-size: 0.72rem;
+  }
+}
